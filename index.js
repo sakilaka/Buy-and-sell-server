@@ -57,7 +57,9 @@ async function run() {
         })
 
         app.get('/users', async (req, res) => {
-            const query = {};
+            let query = {};
+            const email = req.query.email;
+            query = {email : email}
             const cursor = userCollection.find(query);
             const users = await cursor.toArray();
             res.send(users);
@@ -70,12 +72,32 @@ async function run() {
             res.send(goal);
         })
 
-        app.post('/addProduct', async (req, res) => {
+        // app.post('/addProduct', async (req, res) => {
+        //     const product = req.body;
+        //     console.log(product);
+        //     const result = await categoryCollection.updateOne(product);
+        //     res.send(result);
+        // })
+
+
+        app.put("/category", async (req, res) => {
             const product = req.body;
-            console.log(product);
-            const result = await productCollection.insertOne(product);
+            const company = req.body.company;
+            console.log(company);
+            const query = { company: company };
+            const options = { upsert: true };
+            const updateDoc = {
+              $push: {
+                product: product,
+              },
+            };
+            const result = await categoryCollection.updateOne(
+              query,
+              updateDoc,
+              options
+            );
             res.send(result);
-        })
+          });
 
 
     }
