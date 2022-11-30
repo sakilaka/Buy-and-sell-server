@@ -2,7 +2,6 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-// const jwt = require('jsonwebtoken');
 
 
 const app = express();
@@ -19,40 +18,21 @@ app.use(express.json())
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@kamrul.iyiyxhu.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
-// function verifyJWT(req, res, next) {
-//     const authHeader = req.headers.authorization;
-//     if (!authHeader) {
-
-//         return res.status(401).send({ errrr: 'unauthorized' })
-//     }
-
-//     const token = authHeader.split(' ')[1];
-
-//     jwt.verify(token, process.env.ACCESS_TOKEN, function (err, decoded) {
-
-//         if (err) {
-//             return res.status(401).sned({ errr: 'unauthorized' });
-//         }
-//         req.decoded = decoded;
-//         next();
-//     })
-// }
 
 
+app.get('/', (req, res) => {
+    res.send('Cloud computing server is running.')
+})
 
 async function run() {
 
+
     try {
         const categoryCollection = client.db('buyAndSell').collection('category');
-        // const reviewCollection = client.db('cloudKitchen').collection('reviews');
+        const userCollection = client.db('buyAndSell').collection('users');
+        const buyingCollection = client.db('buyAndSell').collection('buy');
+        const productCollection = client.db('buyAndSell').collection('product');
 
-
-        // app.post('/jwt', (req, res) => {
-        //     const user = req.body;
-        //     console.log(user);
-        //     const token = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '1h' })
-        //     res.send({ token })
-        // })
 
         app.get('/category', async (req, res) => {
             const query = {};
@@ -61,12 +41,46 @@ async function run() {
             res.send(category);
         })
 
-     
-        
+        app.get('/category/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const cursor = categoryCollection.find(query);
+            const item = await cursor.toArray();
+            res.send(item);
+        })
+
+        app.post('/users', async (req, res) => {
+            const users = req.body;
+            console.log(users);
+            const result = await userCollection.insertOne(users);
+            res.send(result);
+        })
+
+        app.get('/users', async (req, res) => {
+            const query = {};
+            const cursor = userCollection.find(query);
+            const users = await cursor.toArray();
+            res.send(users);
+        })
+
+        app.post('/buying', async (req, res) => {
+            const buying = req.body;
+            console.log(buying);
+            const goal = await buyingCollection.insertOne(buying);
+            res.send(goal);
+        })
+
+        app.post('/addProduct', async (req, res) => {
+            const product = req.body;
+            console.log(product);
+            const result = await productCollection.insertOne(product);
+            res.send(result);
+        })
+
 
     }
-    catch {
-
+    catch (error) {
+        console.log(error);
     }
 
 }
@@ -74,10 +88,6 @@ run().catch(error => console.log(error))
 
 
 
-
-app.get('/', (req, res) => {
-    res.send('Cloud computing server is running.')
-})
 
 
 
@@ -87,3 +97,6 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log('running', port);
 })
+
+
+
