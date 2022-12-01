@@ -32,6 +32,7 @@ async function run() {
         const userCollection = client.db('buyAndSell').collection('users');
         const buyingCollection = client.db('buyAndSell').collection('buy');
         const advertiseCollection = client.db('buyAndSell').collection('advertise');
+        const wishListCollection = client.db('buyAndSell').collection('wishList');
 
 
         app.get('/category', async (req, res) => {
@@ -124,6 +125,27 @@ async function run() {
             const cursor = advertiseCollection.find(query);
             const advertise = await cursor.toArray();
             res.send(advertise);
+        })
+
+        app.post('/wishlist', async (req, res) => {
+            const wishListItem = req.body;
+            console.log(wishListItem);
+            const result = await wishListCollection.insertOne(wishListItem);
+            res.send(result);
+        })
+
+        app.get('/wishlist', async (req, res) => {
+            const query = {};
+            const cursor = wishListCollection.find(query);
+            const wishList = await cursor.toArray();
+            res.send(wishList);
+        })
+
+        app.delete('/wishlist/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) }
+            const result = await wishListCollection.deleteOne(query);
+            res.send(result);
         })
 
 
