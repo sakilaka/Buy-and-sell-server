@@ -56,10 +56,19 @@ async function run() {
             res.send(result);
         })
 
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)}
+            const result = await userCollection.deleteOne(query);
+            res.send(result);
+        })
+
         app.get('/users', async (req, res) => {
             let query = {};
             const email = req.query.email;
-            query = {email : email}
+            if(email){
+                query = {eamil : email}
+            }
             const cursor = userCollection.find(query);
             const users = await cursor.toArray();
             res.send(users);
