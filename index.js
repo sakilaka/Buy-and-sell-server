@@ -31,7 +31,7 @@ async function run() {
         const categoryCollection = client.db('buyAndSell').collection('category');
         const userCollection = client.db('buyAndSell').collection('users');
         const buyingCollection = client.db('buyAndSell').collection('buy');
-        const productCollection = client.db('buyAndSell').collection('product');
+        const advertiseCollection = client.db('buyAndSell').collection('advertise');
 
 
         app.get('/category', async (req, res) => {
@@ -63,6 +63,13 @@ async function run() {
             res.send(result);
         })
 
+        app.delete('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)}
+            const result = await userCollection.deleteOne(query);
+            res.send(result);
+        })
+
         app.get('/users', async (req, res) => {
             let query = {};
             const email = req.query.email;
@@ -81,12 +88,6 @@ async function run() {
             res.send(goal);
         })
 
-        // app.post('/addProduct', async (req, res) => {
-        //     const product = req.body;
-        //     console.log(product);
-        //     const result = await categoryCollection.updateOne(product);
-        //     res.send(result);
-        // })
 
 
         app.put("/category", async (req, res) => {
@@ -107,6 +108,13 @@ async function run() {
             );
             res.send(result);
           });
+
+          app.post('/advertise', async (req, res) => {
+            const advertise = req.body;
+            console.log(advertise);
+            const result = await advertiseCollection.insertOne(advertise);
+            res.send(result);
+        })
 
 
     }
