@@ -58,14 +58,14 @@ async function run() {
 
         app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id)}
+            const query = { _id: ObjectId(id) }
             const result = await userCollection.deleteOne(query);
             res.send(result);
         })
 
         app.delete('/users/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id: ObjectId(id)}
+            const query = { _id: ObjectId(id) }
             const result = await userCollection.deleteOne(query);
             res.send(result);
         })
@@ -73,8 +73,8 @@ async function run() {
         app.get('/users', async (req, res) => {
             let query = {};
             const email = req.query.email;
-            if(email){
-                query = {eamil : email}
+            if (email) {
+                query = { eamil: email }
             }
             const cursor = userCollection.find(query);
             const users = await cursor.toArray();
@@ -97,24 +97,32 @@ async function run() {
             const query = { company: company };
             const options = { upsert: true };
             const updateDoc = {
-              $push: {
-                product: product,
-              },
+                $push: {
+                    product: product,
+                },
             };
             const result = await categoryCollection.updateOne(
-              query,
-              updateDoc,
-              options
+                query,
+                updateDoc,
+                options
             );
             res.send(result);
-          });
+        });
 
-          app.post('/advertise', async (req, res) => {
+        app.post('/advertise', async (req, res) => {
             const advertise = req.body;
             console.log(advertise);
             const result = await advertiseCollection.insertOne(advertise);
             res.send(result);
         })
+
+        app.get('/advertise', async (req, res) => {
+            const query = {};
+            const cursor = advertiseCollection.find(query);
+            const advertise = await cursor.toArray();
+            res.send(advertise);
+        })
+
 
 
     }
