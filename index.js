@@ -71,14 +71,17 @@ async function run() {
         })
 
         app.get('/users', async (req, res) => {
+            const queryEmail = req.query.email;
+            console.log(queryEmail);
             let query = {};
-            const email = req.query.email;
-            if (email) {
-                query = { eamil: email }
+            if (req.query.email) {
+                query = {
+                    email: queryEmail
+                }
             }
             const cursor = userCollection.find(query);
-            const users = await cursor.toArray();
-            res.send(users);
+            const specificUsers = await cursor.toArray();
+            res.send(specificUsers);;
         })
 
         app.post('/buying', async (req, res) => {
